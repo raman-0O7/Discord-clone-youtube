@@ -33,7 +33,7 @@ export default function RootLayout({
           >
             {children}
             <ModeToggle />
-          </ThemeProvider>
+            </ThemeProvider>
           </body>
       </html>
     </ClerkProvider>
