@@ -20,7 +20,27 @@ export async function PATCH(req : Request , { params } : { params : { serverId :
     });
     return NextResponse.json(server);
   } catch(e)  {
-    console.log(e);
+    console.log("SERVER_ID_PATCH",e);
+    return new NextResponse("Internal Error", { status: 500 });
+  }
+}
+export async function DELETE(req : Request , { params } : { params : { serverId : string; }}) {
+  try {
+    const profile = await currentProfile();
+    if(!profile) return new NextResponse("Unauthorized", { status : 400 });
+    if(!params.serverId) {
+      return new NextResponse("Server ID missing", { status:400 });
+    }
+
+    const server = await db.server.delete({
+      where : {
+        id: params.serverId,
+        profileId : profile.id
+      }
+    });
+    return NextResponse.json(server);
+  } catch(e)  {
+    console.log("SERVER_ID_DELETE", e);
     return new NextResponse("Internal Error", { status: 500 });
   }
 }
