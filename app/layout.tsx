@@ -6,6 +6,7 @@ import { ThemeProvider } from '@/components/Providers/ThemeProvider'
 import { cn } from '@/lib/utils'
 import { ModeToggle } from '@/components/ModeToggle'
 import { ModalProvider } from '@/components/Providers/modal-provider'
+import { SocketProvider } from '@/components/Providers/socket-provider'
 
 
 const font = Open_Sans({ subsets: ['latin'] })
@@ -32,8 +33,10 @@ export default function RootLayout({
           disableTransitionOnChange
           storageKey='discord-theme'
           >
+            <SocketProvider >
             <ModalProvider />
             {children}
+            </SocketProvider> 
             <ModeToggle />
             </ThemeProvider>
           </body>
