@@ -7,6 +7,7 @@ import { cn } from '@/lib/utils'
 import { ModeToggle } from '@/components/ModeToggle'
 import { ModalProvider } from '@/components/Providers/modal-provider'
 import { SocketProvider } from '@/components/Providers/socket-provider'
+import { QueryProvider } from '@/components/Providers/query-provider'
 
 
 const font = Open_Sans({ subsets: ['latin'] })
@@ -26,18 +27,20 @@ export default function RootLayout({
       <html lang="en" suppressHydrationWarning>
         
           <body className={cn(font.className, "bg-white dark:bg-[#313338]")}>
-          <ThemeProvider 
-            attribute='class'
-            defaultTheme='dark'
-            enableSystem={true}
-            disableTransitionOnChange
-            storageKey='discord-theme'
-          >
-            <SocketProvider >
-            <ModalProvider />
-            {children}
-            </SocketProvider> 
-            <ModeToggle />
+            <ThemeProvider 
+              attribute='class'
+              defaultTheme='dark'
+              enableSystem={true}
+              disableTransitionOnChange
+              storageKey='discord-theme'
+            >
+              <SocketProvider >
+                <ModalProvider />
+                <QueryProvider >
+                  {children}
+                </QueryProvider>
+              </SocketProvider> 
+              <ModeToggle />
             </ThemeProvider>
           </body>
       </html>
