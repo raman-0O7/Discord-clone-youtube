@@ -48,7 +48,7 @@ const ChannelIdPage = async({
         type="channel"
         member={member}
         apiUrl="/api/messages"
-        socketUrl="/api/socket/messages"
+        socketUrl="/api/socket/messages/"
         socketQuery={{
           channelId: channel.id,
           serverId: channel.serverId
