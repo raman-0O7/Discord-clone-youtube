@@ -21,6 +21,8 @@ import {
 } from "@/components/ui/form";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
+import { useModal } from "@/hooks/use-modal-store";
+import { useParams, useRouter } from "next/navigation";
 
 interface ChatItemsProps {
   id : string;
@@ -60,8 +62,7 @@ export const ChatItems = ({
   socketQuery
 } : ChatItemsProps) => {
   const [isEditting, setIsEditting] = useState(false);
-  const [isDeleting, setIsDeleting] = useState(false);
-
+  const { onOpen } = useModal();
   useEffect(() => {
     const handleKeyDown = (event : any) => {
       if(event.key === "Escape" || event.keyCode === 27) {
@@ -72,7 +73,18 @@ export const ChatItems = ({
     window.addEventListener("keydown", handleKeyDown);
 
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [])
+  }, []);
+
+  const router = useRouter();
+  const params = useParams();
+
+  const onUserClick = () => {
+    if(member.id === currentMember.id) {
+      return;
+    }
+
+    router.push(`/servers/${params?.serverId}/conversations/${member.id}`);
+  }
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver : zodResolver(formSchema),
@@ -92,7 +104,7 @@ export const ChatItems = ({
   const onSubmit = async (values : z.infer<typeof formSchema>) => {
     try {
       const url = qs.stringifyUrl({
-        url: `${socketUrl}${id}`,
+        url: `${socketUrl}/${id}`,
         query: socketQuery
       });
 
@@ -117,13 +129,13 @@ export const ChatItems = ({
   return (
     <div className="relative group flex items-center hover:bg-black/5 p-4 transition w-full">
       <div className="group flex gap-x-2 items-start w-full">
-        <div className="cursor-pointer hover:drop-shadow-md transition">
+        <div onClick={onUserClick} className="cursor-pointer hover:drop-shadow-md transition">
           <UserAvatar src={member.profile.imageUrl}/>
         </div>
         <div className="flex flex-col w-full">
           <div className="flex items-center gap-x-2">
             <div className="flex items-center">
-              <p className="font-semibold text-sm hover:underline cursor-pointer">
+              <p onClick={onUserClick} className="font-semibold text-sm hover:underline cursor-pointer">
                 {member.profile.name}
               </p>
               <ActionTooltip label={member.role}>
@@ -212,7 +224,7 @@ export const ChatItems = ({
             </ActionTooltip>
           )}
           <ActionTooltip label="Delete">
-            <Trash className="cursor-pointer ml-auto w-4 h-4 text-zinc-500 hover:text-zinc-600 dark:hover:text-dark-300 dark:text-zinc-400 transition"/>
+            <Trash onClick={() => onOpen("deleteMessage", { apiUrl : `${socketUrl}/${id}`, query: socketQuery })} className="cursor-pointer ml-auto w-4 h-4 text-zinc-500 hover:text-zinc-600 dark:hover:text-dark-300 dark:text-zinc-400 transition"/>
           </ActionTooltip>
         </div>
       )}
